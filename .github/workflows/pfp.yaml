@@ -2,6 +2,9 @@ name: Preview Frontend Provider
 run-name: Preview Action
 
 on:
+  push: 
+    branches: [ main ]
+
   pull_request:
     branches: [ main ]
     types: [ synchronize, opened, closed ]
