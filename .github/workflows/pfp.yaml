@@ -21,34 +21,33 @@ jobs:
           aws-secret-access-key: ${{ secrets.PFP_SECRET_KEY }}
           aws-region: ap-northeast-2
 
-      - name: Upload to S3
-        env:
-          BUCKET_NAME: preview-frontend-provider
-          URL_PREFIX: dev.fe.lunit.io
-          CSV_FILE: app-url-info.csv
-        shell: bash
-        run: |
-          aws s3 cp "s3://${BUCKET_NAME}/${CSV_FILE}" "./${CSV_FILE}"
-          
-          RANDOM_URL=$(awk -F ',|, ' -v name="${GIT_REPO}" -v pr="${GIT_EVENT_PR_NUMBER}" '$1 == name  && $4 == pr { print $3 }' "./${CSV_FILE}")
-          
-          while : ;do
-            EXIST_RANDOM_STR=$(awk -F ',|, ' -v var="${RANDOM_STR}" '$0~var{ print $2 }' "./${CSV_FILE}")
-        
-            # if random string exists already, regenerate
-            if [[ -n "${EXIST_RANDOM_STR}" ]];then
-            RANDOM_STR=$(tr -dc a-z0-9 </dev/urandom | head -c 9 ; echo '')
-            else
-            RANDOM_URL="${GIT_REPO}-${RANDOM_STR}"
-            break
-            fi
-          done;
-          
-          STR_TO_ADD="${GIT_REPO}, ${RANDOM_STR}, ${RANDOM_URL}, ${GIT_EVENT_PR_NUMBER}"
-          
-          echo "${STR_TO_ADD}" >> "./${CSV_FILE}"
-          
-          echo "${RANDOM_URL}"
+#      - name: Upload to S3
+#        env:
+#          BUCKET_NAME: preview-frontend-provider
+#          URL_PREFIX: dev.fe.lunit.io
+#          CSV_FILE: app-url-info.csv
+#        shell: bash
+#        run: |
+#          aws s3 cp "s3://${BUCKET_NAME}/${CSV_FILE}" "./${CSV_FILE}"
+#
+#          RANDOM_URL=$(awk -F ',|, ' -v name="${GIT_REPO}" -v pr="${GIT_EVENT_PR_NUMBER}" '$1 == name  && $4 == pr { print $3 }' "./${CSV_FILE}")
+#
+#          while : ;do
+#            EXIST_RANDOM_STR=$(awk -F ',|, ' -v var="${RANDOM_STR}" '$0~var{ print $2 }' "./${CSV_FILE}")
+#
+#            if [[ -n "${EXIST_RANDOM_STR}" ]];then
+#              RANDOM_STR=$(tr -dc a-z0-9 </dev/urandom | head -c 9 ; echo '')
+#            else
+#              RANDOM_URL="${GIT_REPO}-${RANDOM_STR}"
+#            break
+#            fi
+#          done;
+#
+#          STR_TO_ADD="${GIT_REPO}, ${RANDOM_STR}, ${RANDOM_URL}, ${GIT_EVENT_PR_NUMBER}"
+#
+#          echo "${STR_TO_ADD}" >> "./${CSV_FILE}"
+#
+#          echo "${RANDOM_URL}"
           
 
       # TODO : 랜덤 url 만들고 s3에 업로드만 해주면 됨
