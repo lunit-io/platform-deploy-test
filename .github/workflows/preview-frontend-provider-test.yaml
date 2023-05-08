@@ -1,0 +1,47 @@
+name: Preview Action Provider
+run-name: Preview Action
+
+on:
+  pull_request:
+    branches: [ main ]
+    types: [ synchronize, opened, closed ]
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    #runs-on: [ csg-sd-runner, al2_x86_64 ]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: build
+        if: github.event.pull_request.merged == false && !contains(github.event.action, 'closed')
+        env:
+          CI: false # Why is it required?
+        run: |
+          npm ci
+          npm run build
+
+      - name: preview-frontend-provider
+        id: preview-frontend-provider
+        #uses: ./.github/actions/preview-frontend-provider
+        uses: lunit-io/csg-sd-gitops/git-actions/preview-frontend-provider@v1.3.0
+        with:
+          pfp-access-key: ${{ secrets.PFP_ACCESS_KEY }}
+          pfp-secret-key: ${{ secrets.PFP_SECRET_KEY }}
+
+          # Optional
+          #build-path: /build # default build
+          use-public-runner: true # default false
+
+      - uses: NejcZdovc/comment-pr@v2
+        with:
+          message: |
+            ✅ Preview 
+            ${{ steps.preview-frontend-provider.outputs.random-url }}
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
