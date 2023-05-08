@@ -28,8 +28,8 @@ jobs:
 
       - name: preview-frontend-provider
         id: preview-frontend-provider
-        uses: ./.github/actions/preview-frontend-provider
-        #uses: lunit-io/csg-sd-gitops/git-actions/preview-frontend-provider@v1.3.0
+        #uses: ./.github/actions/preview-frontend-provider
+        uses: lunit-io/csg-sd-gitops/git-actions/preview-frontend-provider@v1.3.0
         with:
           pfp-access-key: ${{ secrets.PFP_ACCESS_KEY }}
           pfp-secret-key: ${{ secrets.PFP_SECRET_KEY }}
