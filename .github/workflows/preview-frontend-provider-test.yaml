@@ -3,7 +3,7 @@ run-name: Preview Action
 
 on:
   pull_request:
-    branches: [ test/pfp ]
+    branches: [ main ]
     types: [ synchronize, opened, closed ]
 
 jobs:
